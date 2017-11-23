@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-package dao;
+package Controller;
 
-import cantina.Pessoa;
+import Model.Pessoa;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

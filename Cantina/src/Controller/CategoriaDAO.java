@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-package dao;
+package Controller;
 
-import cantina.Produto;
+import Model.Categoria;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,23 +17,23 @@ import java.util.logging.Logger;
  *
  * @author Aluno
  */
-public class ProdutoDAO extends GenericDAO {
+public class CategoriaDAO extends GenericDAO 
+{
 
-    public ProdutoDAO()
+    public CategoriaDAO()
     {
         super(); //chama o contrutor da classe mãe extendida(GenericDAO)
     }
             
-    public boolean inserir(Produto produto)
+    public boolean inserir(Categoria categoria)
     {
-        String sql = "INSERT INTO produto (prod_cod, prod_desc, prod_tipo) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO categoria (codigo, tipo) VALUES (?, ?)";
         
         try
         {
             this.prepareStmte(sql);
-            this.stmte.setInt(1,produto.getCodProduto());
-            this.stmte.setString(2,produto.getDescProduto());
-            this.stmte.setString(3,produto.getTipoProduto());
+            this.stmte.setInt(1,categoria.getCodCategoria());
+            this.stmte.setString(2,categoria.getTipo());
             this.stmte.execute();
             return true;
         }
@@ -43,14 +43,14 @@ public class ProdutoDAO extends GenericDAO {
         }
     }
     
-    public boolean excluir(Produto produto)
+    public boolean excluir(Categoria categoria)
     {
-        String sql = "DELETE FROM produto WHERE prod_cod = ?";
+        String sql = "DELETE FROM categoria WHERE codigo = ?";
         
         try
         {
             this.prepareStmte(sql);
-            this.stmte.setInt(1, produto.getCodProduto());
+            this.stmte.setInt(1, categoria.getCodCategoria());
             //this.stmte.execute();
             
             int exec = this.stmte.executeUpdate();
@@ -70,16 +70,15 @@ public class ProdutoDAO extends GenericDAO {
         }
     }
     
-     public boolean editar(Produto produto)
+     public boolean editar(Categoria categoria)
     {
-        String sql = "UPDATE produto SET prod_desc = ?, prod_tipo = ? WHERE prod_cod = ?";
+        String sql = "UPDATE categoria SET tipo = ? WHERE codigo = ?";
         
         try
         {
             this.prepareStmte(sql);
-            this.stmte.setString(1,produto.getDescProduto());
-            this.stmte.setString(2,produto.getTipoProduto());
-            this.stmte.setInt(3, produto.getCodProduto());
+            this.stmte.setString(1,categoria.getTipo());
+            this.stmte.setInt(2, categoria.getCodCategoria());
             this.stmte.execute();
             return true;
         }
@@ -89,21 +88,20 @@ public class ProdutoDAO extends GenericDAO {
         }
     }
     
-    public Produto getProdutoByDesc(String descproduto)
+    public Categoria getCategoriaByTipo(String tipocategoria)
     {
-        Produto prod = new Produto();
+        Categoria cat = new Categoria();
         
-        String sql = "SELECT * FROM produto WHERE prod_desc LIKE ?";
+        String sql = "SELECT * FROM categoria WHERE tipo LIKE ?";
         try
         {
             this.prepareStmte(sql);
-            this.stmte.setString(1,descproduto+'%');
+            this.stmte.setString(1,tipocategoria+'%');
             ResultSet rs = this.stmte.executeQuery(); //sempre usar quando fazer uma consulta(SELECT)
             rs.first();
-            prod.setCodProduto(rs.getInt("prod_cod"));
-            prod.setDescProduto(rs.getString("prod_desc"));
-            prod.setTipoProduto(rs.getString("prod_tipo"));
-            return prod;
+            cat.setCodCategoria(rs.getInt("codigo"));
+            cat.setTipo(rs.getString("tipo"));
+            return cat;
         }
         catch(Exception e)
         {
@@ -111,11 +109,12 @@ public class ProdutoDAO extends GenericDAO {
         }
     }
     
-    public ArrayList<Produto> getProdutosByCod()
+    public ArrayList<Categoria> getCategoriasByCod() //L I S T A
     {
-        ArrayList<Produto> produto = new ArrayList<Produto>();
-        
-        String sql = "SELECT * FROM produto ORDER BY prod_cod ASC";
+        ArrayList<Categoria> categoria = new ArrayList<Categoria>();
+        //Categoria[] categorias = new Categoria[200];
+        int x = 0;
+        String sql = "SELECT * FROM categoria ORDER BY codigo ASC";
         
         try
         {
@@ -123,14 +122,13 @@ public class ProdutoDAO extends GenericDAO {
             ResultSet rs = this.stmte.executeQuery(); //sempre usar quando fazer uma consulta(SELECT)
             
             while(rs.next()){
-                Produto p = new Produto();
-                p.setCodProduto(rs.getInt("prod_cod"));
-                p.setDescProduto(rs.getString("prod_desc"));
-                p.setTipoProduto(rs.getString("prod_tipo"));
-                
-                produto.add(p);
+                Categoria c = new Categoria();
+                c.setCodCategoria(rs.getInt("codigo"));
+                c.setTipo(rs.getString("tipo"));
+                categoria.add(c);
+                x++;
             }
-            return produto;
+            return categoria;
             
         }
         catch(Exception e)
@@ -139,11 +137,11 @@ public class ProdutoDAO extends GenericDAO {
         }
     }
     
-    public ArrayList<Produto> getProdutosByDesc()
+    public Categoria[] getCategoriasByTipo() //V E T O R
     {
-        ArrayList<Produto> produto = new ArrayList<Produto>();
-        
-        String sql = "SELECT * FROM produto ORDER BY prod_desc ASC";
+        Categoria[] categorias = new Categoria[200];
+        int x = 0;
+        String sql = "SELECT * FROM categoria ORDER BY tipo ASC";
         
         try
         {
@@ -151,14 +149,13 @@ public class ProdutoDAO extends GenericDAO {
             ResultSet rs = this.stmte.executeQuery(); //sempre usar quando fazer uma consulta(SELECT)
             
             while(rs.next()){
-                Produto p = new Produto();
-                p.setCodProduto(rs.getInt("prod_cod"));
-                p.setDescProduto(rs.getString("prod_desc"));
-                p.setTipoProduto(rs.getString("prod_tipo"));
-                
-                produto.add(p);
+                Categoria c = new Categoria();
+                c.setCodCategoria(rs.getInt("codigo"));
+                c.setTipo(rs.getString("tipo"));
+                categorias[x] = c;
+                x++;
             }
-            return produto;
+            return categorias;
             
         }
         catch(Exception e)
@@ -167,18 +164,18 @@ public class ProdutoDAO extends GenericDAO {
         }
     }
     
-    public int AutoIncCod(){
-        String sql = "SELECT (MAX(prod_cod) + 1) as codigo FROM produto";
+    public int AutoIncCod()
+    {
+        String sql = "SELECT (MAX(codigo) + 1) as codigo FROM categoria";
         this.prepareStmte(sql);
         ResultSet rs;
         int retorno = 0;
-        try 
-        {
+        try {
             rs = this.stmte.executeQuery(); //sempre usar quando fazer uma consulta(SELECT)
             rs.first();
             retorno = rs.getInt("codigo");
         } catch (SQLException ex) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CategoriaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return retorno;

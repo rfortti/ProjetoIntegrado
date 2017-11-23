@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 
-package forms;
+package View;
 
-import cantina.Pedido;
-import dao.PedidoDAO;
+import Model.Pedido;
+import Controller.PedidoDAO;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
